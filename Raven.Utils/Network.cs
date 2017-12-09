@@ -1,10 +1,7 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Raven.Utils
 {
@@ -22,27 +19,40 @@ namespace Raven.Utils
             return results;
         }
 
-        public Dictionary<string,long> Ping_IPs(List<UnicastIPAddressInformation> iPs)
+
+        public IPAddress[] ResolveDNStoIPList(string host)
         {
-            var results=new Dictionary<string, long>();
-            foreach (var unicastIpAddressInformation in iPs)
+            var entries = Dns.GetHostEntry(host);
+            if (entries.AddressList.Length == 0)
             {
-                try
-                {
-                    var address = unicastIpAddressInformation.Address.MapToIPv4();
-                    Ping ping = new Ping();
-                    var reply = ping.Send(address.ToString());
-                    results.Add(address.ToString(), reply.RoundtripTime);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    e = null;
-                }
-              
-              
+                throw new NetworkInformationException(404);
+            }
+
+            return entries.AddressList;
+        }
+
+        public Dictionary<string, long> Ping_IPs(IPAddress[] iPs)
+        {
+            var results = new Dictionary<string, long>();
+            foreach (var address in iPs)
+            {
+                var ping = new Ping();
+                var reply = ping.Send(address);
+                results.Add(address.ToString(), reply.RoundtripTime);
             }
             return results;
+        }
+
+        public Dictionary<string,long> Ping_IPs(List<UnicastIPAddressInformation> iPs)
+        {
+            var addresses=new IPAddress[iPs.Count];
+            var i = 0;
+            foreach (var unicastIpAddressInformation in iPs)
+            {
+               addresses[i] = unicastIpAddressInformation.Address.MapToIPv4();
+                i++;
+            }
+            return Ping_IPs(iPs);
         }
     }
 }

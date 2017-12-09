@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,29 +14,14 @@ namespace raven
     {
         static void Main(string[] args)
         {
-            try
+            var iptarget = new Network().ResolveDNStoIPList("www.google.com")[0];
+            Console.WriteLine(iptarget);
+            var pingIPs = new Network().Ping_IPs(new[]{iptarget});
+
+            foreach (var p in pingIPs)
             {
-                var network = new Network();
-                var localIPs = network.Network_IPs();
-                Console.WriteLine("getting local address info");
-                foreach (var unicastIpAddressInformation in localIPs)
-                {
-                    Console.WriteLine(unicastIpAddressInformation.Address.ToString());
-                }
-                Console.WriteLine("pinging");
-                var pingResults = network.Ping_IPs(localIPs);
-                foreach (var pingResult in pingResults)
-                {
-                    Console.WriteLine(pingResult.Key, pingResult.Value);
-                }
-                Console.Read();
+                Console.WriteLine("ip {0} ping {1}",p.Key, p.Value);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                e = null;
-            }
-           
         }
     }
 }
