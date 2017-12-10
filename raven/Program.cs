@@ -22,6 +22,13 @@ namespace raven
             {
                 Console.WriteLine("ip {0} ping {1}",p.Key, p.Value);
             }
+
+            var whoisdata = new Network().GetWhoisInformation("whois.verisign-grs.com", "google.com");
+            Console.Write(whoisdata);
+
+            var whoisServerDictionary =new Data().ExtractWhoisServerList("whoisServers.dat");
+
+
         }
     }
 }
