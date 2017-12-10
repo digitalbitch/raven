@@ -1,5 +1,6 @@
 ﻿using Raven.Utils;
 using System;
+using System.Linq;
 
 namespace raven
 {
@@ -26,6 +27,9 @@ namespace raven
                 string formatedOutput=String.Format("|{0,10}|{1,10}",entry.Key, entry.Value);
                 Console.WriteLine(formatedOutput);
             }
+             var targetWhoIs1= new Network(whoisServerDictionary).GetWhoisInformation("google.co.uk");
+             var targetWhoIs2 = new Network(whoisServerDictionary).GetWhoisInformation("ed.ac.uk");
+
         }
     }
 }

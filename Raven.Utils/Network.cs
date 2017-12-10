@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,17 @@ namespace Raven.Utils
 {
     public class Network
     {
+        private readonly Dictionary<string, string> _whoisServerDictionary;
+
+        public Network(Dictionary<string,string> whoisServerDictionary)
+        {
+            _whoisServerDictionary = whoisServerDictionary;
+        }
+
+        public Network()
+        {
+        }
+
         public List<UnicastIPAddressInformation> Network_IPs()
         {
             var results=new List<UnicastIPAddressInformation>();
@@ -78,5 +90,33 @@ namespace Raven.Utils
 
             return stringBuilderResult.ToString();
         }
+
+        public string GetWhoisInformation(string url )
+        {
+            if (_whoisServerDictionary == null)
+            {
+                throw new KeyNotFoundException("whois server dictionary not set in constructor");
+            }
+          
+            var s = string.Empty;
+            var parts = url.ToLowerInvariant().Split('.').Reverse().ToArray();
+            if (_whoisServerDictionary.Any(kv => kv.Key == $"{parts[1]}.{parts[0]}"))
+            {
+                s = _whoisServerDictionary[$"{parts[1]}.{parts[0]}"];
+            }
+            else
+            {
+                if (_whoisServerDictionary.Any(kv => kv.Key == parts[0]))
+                {
+                    s = _whoisServerDictionary[parts[0]];
+                }
+                else
+                {
+                    throw new KeyNotFoundException("Domain extension not found in dictionary of whois servers");
+                }
+            }
+            return GetWhoisInformation(s, url);
+        }
+
     }
 }
