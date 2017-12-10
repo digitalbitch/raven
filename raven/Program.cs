@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
-using Raven.Utils;
-using static System.Net.NetworkInformation.NetworkInterface;
+﻿using Raven.Utils;
+using System;
 
 namespace raven
 {
@@ -28,7 +21,11 @@ namespace raven
 
             var whoisServerDictionary =new Data().ExtractWhoisServerList("whoisServers.dat");
 
-
+            foreach (var entry in whoisServerDictionary)
+            {
+                string formatedOutput=String.Format("|{0,10}|{1,10}",entry.Key, entry.Value);
+                Console.WriteLine(formatedOutput);
+            }
         }
     }
 }
