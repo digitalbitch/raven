@@ -1,6 +1,7 @@
 ﻿using Raven.Utils;
 using System;
 using System.Linq;
+using System.Net;
 
 namespace raven
 {
@@ -8,6 +9,10 @@ namespace raven
     {
         static void Main(string[] args)
         {
+            var results=new Claw().Sniff(442, 444, new Network().ResolveDNStoIPList("www.google.com")[0]);
+
+
+
             var iptarget = new Network().ResolveDNStoIPList("www.google.com")[0];
             Console.WriteLine(iptarget);
             var pingIPs = new Network().Ping_IPs(new[]{iptarget});
